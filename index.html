@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revenue Modeler — Impact Hydrogen Solutions</title>
+<style>
+:root {
+  --bg:       #080F1C;
+  --card:     #0D1B2E;
+  --border:   #1A3252;
+  --border2:  #234060;
+  --text:     #F0F4F8;
+  --t2:       rgba(240,244,248,.58);
+  --t3:       rgba(240,244,248,.32);
+  --blue:     #3B8BEB;
+  --blue-dk:  #185FA5;
+  --blue-dim: rgba(59,139,235,.1);
+  --purple:   #8B5CF6;
+  --pur-dk:   #6D28D9;
+  --pur-dim:  rgba(139,92,246,.1);
+  --amber:    #F59E0B;
+  --amb-dk:   #B45309;
+  --amb-dim:  rgba(245,158,11,.1);
+  --sky:      #0EA5E9;
+  --sky-dk:   #0369A1;
+  --sky-dim:  rgba(14,165,233,.1);
+  --green:    #22C55E;
+  --gold:     #C9A84C;
+  --danger:   #EF4444;
+  --warn:     #F59E0B;
+  --r:        12px;
+  --rs:       8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:1140px;margin:0 auto;padding:36px 24px 64px}
+
+/* ── header ── */
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;padding-bottom:24px;border-bottom:1px solid var(--border);margin-bottom:28px}
+.hdr-title{font-size:26px;font-weight:800;letter-spacing:-.01em}
+.hdr-eye{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
+.hdr-streams{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px}
+.badge{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2)}
+.badge-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.hdr-annual{text-align:right}
+.hdr-annual-lbl{font-size:11px;color:var(--t3);margin-bottom:3px}
+.hdr-annual-val{font-size:22px;font-weight:700;color:var(--t2)}
+
+/* ── summary panel ── */
+.summary-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:28px;margin-bottom:14px}
+.total-lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.total-num{font-size:54px;font-weight:800;line-height:1;letter-spacing:-.02em;transition:color .4s}
+.total-msg{font-size:14px;margin-top:8px;transition:color .3s}
+.prog-wrap{flex:1;min-width:240px;max-width:380px}
+.prog-row{display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:7px}
+.prog-row span:last-child{font-weight:700}
+.prog-track{height:8px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden;margin-bottom:18px}
+.prog-fill{height:100%;border-radius:4px;transition:width .3s,background .4s}
+.stream-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+.stream-mini-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:3px}
+.stream-mini-val{font-size:15px;font-weight:700}
+
+/* ── cards grid ── */
+.cards-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:18px}
+@media(max-width:600px){.cards-grid{grid-template-columns:1fr}}
+@media(min-width:1000px){.cards-grid{grid-template-columns:repeat(4,1fr)}}
+
+.stream-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.card-bar{height:3px}
+.card-body{padding:20px 22px}
+.card-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px}
+.card-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+.card-tot{font-size:20px;font-weight:700}
+
+/* ── year pills ── */
+.year-pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:5px}
+.ypill{padding:4px 12px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .12s}
+.ypill:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.ypill.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* ── sliders ── */
+.srow{margin-bottom:18px}
+.slbl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;font-size:12px}
+.slbl-txt{color:var(--t2)}
+.slbl-val{font-weight:700}
+.snote{font-size:11px;color:var(--t3);margin-top:4px;line-height:1.4}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.5);margin-top:-6px}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;cursor:pointer;border:none;box-shadow:0 1px 5px rgba(0,0,0,.5)}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px}
+
+/* ── info box ── */
+.ibox{border-radius:var(--rs);padding:10px 14px;font-size:12px;color:var(--t2);line-height:1.6;border-left:2px solid transparent}
+.ibox strong{font-weight:700}
+
+/* ── floor grid ── */
+.floor-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.floor-cell{background:rgba(255,255,255,.04);border-radius:var(--rs);padding:10px 12px;text-align:center}
+.floor-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:3px}
+.floor-val{font-size:17px;font-weight:700}
+
+/* ── presets ── */
+.preset-ttl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:8px}
+.preset-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:var(--rs);cursor:pointer;font-size:12px;transition:background .1s}
+.preset-row:hover{background:rgba(255,255,255,.06)}
+.preset-lbl{color:var(--t2)}
+.preset-val{font-weight:700}
+
+/* ── chart card ── */
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px 28px;margin-bottom:24px}
+.chart-ttl{font-size:14px;font-weight:700;margin-bottom:3px}
+.chart-sub{font-size:12px;color:var(--t2);margin-bottom:16px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:16px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2)}
+.leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* ── footer ── */
+.footer{text-align:center;padding-top:24px;border-top:1px solid var(--border);font-size:11px;color:var(--t3);line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ── HEADER ─────────────────────────────────────────────── -->
+<header class="hdr">
+  <div>
+    <p class="hdr-eye">Impact Hydrogen Solutions</p>
+    <h1 class="hdr-title">Revenue Modeler</h1>
+    <div class="hdr-streams">
+      <span class="badge"><span class="badge-dot" style="background:#3B8BEB"></span>SR&amp;ED</span>
+      <span class="badge"><span class="badge-dot" style="background:#8B5CF6"></span>Carbon Credits</span>
+      <span class="badge"><span class="badge-dot" style="background:#F59E0B"></span>Abandonment Services</span>
+      <span class="badge"><span class="badge-dot" style="background:#0EA5E9"></span>Clear Sky Fuel</span>
+    </div>
+  </div>
+  <div class="hdr-annual">
+    <p class="hdr-annual-lbl">Annual income</p>
+    <p id="ann-d" class="hdr-annual-val">—</p>
+  </div>
+</header>
+
+<!-- ── SUMMARY ─────────────────────────────────────────────── -->
+<div class="summary-panel">
+  <div>
+    <p class="total-lbl">Total monthly income</p>
+    <p id="total-d" class="total-num" style="color:var(--blue)">—</p>
+    <p id="status-msg" class="total-msg" style="color:var(--t2)">Adjust the sliders to model your income.</p>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-row"><span>Toward $30,000 / month</span><span id="pct-d">—</span></div>
+    <div class="prog-track"><div id="pbar" class="prog-fill" style="width:0%;background:var(--blue)"></div></div>
+    <div class="stream-row" style="grid-template-columns:repeat(4,1fr)">
+      <div>
+        <p class="stream-mini-lbl">SR&amp;ED</p>
+        <p id="sred-m" class="stream-mini-val" style="color:var(--blue)">—</p>
+      </div>
+      <div>
+        <p class="stream-mini-lbl">Carbon</p>
+        <p id="carbon-m" class="stream-mini-val" style="color:var(--purple)">—</p>
+      </div>
+      <div>
+        <p class="stream-mini-lbl">Abandonment</p>
+        <p id="abn-m" class="stream-mini-val" style="color:var(--amber)">—</p>
+      </div>
+      <div>
+        <p class="stream-mini-lbl">Clear Sky</p>
+        <p id="sky-m" class="stream-mini-val" style="color:var(--sky)">—</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── STREAM CARDS ───────────────────────────────────────── -->
+<div class="cards-grid">
+
+  <!-- SR&ED -->
+  <div class="stream-card">
+    <div class="card-bar" style="background:var(--blue)"></div>
+    <div class="card-body">
+      <div class="card-hdr">
+        <span class="card-name" style="color:var(--blue)">SR&amp;ED</span>
+        <span id="sred-t" class="card-tot" style="color:var(--blue)">—</span>
+      </div>
+
+      <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:7px">Portfolio year</p>
+      <div class="year-pills" id="ypills"></div>
+      <p style="font-size:11px;color:var(--t3);line-height:1.5;margin:5px 0 18px"><strong style="color:rgba(240,244,248,.5)">Large O&amp;G (Provider 1):</strong> Sliding-scale fee + 8% IEG, your 10% — rate varies by claim size (~1.5–2.2%). 2 claims in Year 1, 1/yr after, 10% churn.<br><strong style="color:rgba(240,244,248,.5)">Small clients (Provider 2):</strong> 15% fee + 8% IEG, your 20% = 3.24% effective. 2 claims in Year 1, 1/yr after, 10% churn.</p>
+
+      <div class="srow">
+        <div class="slbl"><span class="slbl-txt">New large O&amp;G clients / year</span><span id="nlarge-v" class="slbl-val" style="color:var(--blue)">4</span></div>
+        <input type="range" min="0" max="36" step="1" value="4" id="nlarge" data-color="#3B8BEB">
+      </div>
+
+      <div class="srow">
+        <div class="slbl"><span class="slbl-txt">New small clients / year</span><span id="nsmall-v" class="slbl-val" style="color:var(--blue)">6</span></div>
+        <input type="range" min="0" max="48" step="1" value="6" id="nsmall" data-color="#3B8BEB">
+      </div>
+
+      <div class="srow">
+        <div class="slbl"><span class="slbl-txt">Avg large claim value</span><span id="avgl-v" class="slbl-val" style="color:var(--blue)">$1M</span></div>
+        <input type="range" min="500000" max="5000000" step="100000" value="1000000" id="avgl" data-color="#3B8BEB">
+        <p id="avgl-note" class="snote"></p>
+      </div>
+
+      <div class="srow">
+        <div class="slbl"><span class="slbl-txt">Avg small claim value</span><span id="avgs-v" class="slbl-val" style="color:var(--blue)">$300K</span></div>
+        <input type="range" min="100000" max="450000" step="25000" value="300000" id="avgs" data-color="#3B8BEB">
+        <p id="avgs-note" class="snote"></p>
+      </div>
+
+      <div class="ibox" style="background:var(--blue-dim);border-color:rgba(59,139,235,.35)">
+        Large (Provider 1): <strong style="color:var(--blue)">Sliding-scale fee + 8% IEG · your 10% (~1.5–2.2% eff.)</strong><br>
+        Small (Provider 2): <strong style="color:var(--blue)">15% fee + 8% IEG · your 20% = 3.24% effective</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carbon Credits -->
+  <div class="stream-card">
+    <div class="card-bar" style="background:var(--purple)"></div>
+    <div class="card-body">
+      <div class="card-hdr">
+        <span class="card-name" style="color:var(--purple)">Carbon credits</span>
+        <span id="carbon-t" class="card-tot" style="color:var(--purple)">—</span>
+      </div>
+
+      <div class="ibox" style="background:var(--pur-dim);border-color:rgba(139,92,246,.35);margin-bottom:20px">
+        Rate: <strong style="color:var(--purple)">$0.455 per tonne</strong><br>
+        Credits from qualifying carbon reduction projects — often the same projects as abandonment work, creating a natural dual-stream synergy
+      </div>
+
+      <div class="srow">
+        <div class="slbl"><span class="slbl-txt">Monthly carbon tonnes</span><span id="ton-v" class="slbl-val" style="color:var(--purple)">5,000 t/mo</span></div>
+        <input type="range" min="0" max="1000000" step="10000" value="5000" id="tons" data-color="#8B5CF6">
+      </div>
+
+      <p class="preset-ttl" style="margin-top:8px">Quick set</p>
+      <div id="ton-presets"></div>
+    </div>
+  </div>
+
+  <!-- Abandonment Services -->
+  <div class="stream-card">
+    <div class="card-bar" style="background:var(--amber)"></div>
+    <div class="card-body">
+      <div class="card-hdr">
+        <span class="card-name" style="color:var(--amber)">Abandonment services</span>
+        <span id="abn-t" class="card-tot" style="color:var(--amber)">—</span>
+      </div>
+
+      <div class="floor-grid">
+        <div class="floor-cell">
+          <p class="floor-lbl">Guaranteed floor</p>
+          <p class="floor-val" style="color:var(--amber)">$6,000</p>
+        </div>
+        <div class="floor-cell">
+          <p class="floor-lbl">Commission rate</p>
+          <p class="floor-val" style="color:var(--amber)">2.0%</p>
+        </div>
+      </div>
+
+      <div class="srow">
+        <div class="slbl"><span class="slbl-txt">Monthly sales you bring in</span><span id="sale-v" class="slbl-val" style="color:var(--amber)">$250K</span></div>
+        <input type="range" min="0" max="2000000" step="50000" value="250000" id="sales" data-color="#F59E0B">
+        <p id="sale-note" class="snote"></p>
+      </div>
+
+      <p class="preset-ttl" style="margin-top:4px">Quick set</p>
+      <div id="sale-presets"></div>
+    </div>
+  </div>
+
+  <!-- Clear Sky Fuel -->
+  <div class="stream-card">
+    <div class="card-bar" style="background:var(--sky)"></div>
+    <div class="card-body">
+      <div class="card-hdr">
+        <span class="card-name" style="color:var(--sky)">Clear Sky Fuel</span>
+        <span id="sky-t" class="card-tot" style="color:var(--sky)">—</span>
+      </div>
+
+      <div class="ibox" style="background:var(--sky-dim);border-color:rgba(14,165,233,.35);margin-bottom:20px">
+        Rate: <strong style="color:var(--sky)">3.5¢ per litre</strong>&nbsp;·&nbsp;Your commission: <strong style="color:var(--sky)">7% = $0.00245 / L</strong><br>
+        Fuel savings program — up to 5,000,000 L / month
+      </div>
+
+      <div class="srow">
+        <div class="slbl"><span class="slbl-txt">Monthly volume</span><span id="ltr-v" class="slbl-val" style="color:var(--sky)">250K L</span></div>
+        <input type="range" min="0" max="5000000" step="50000" value="250000" id="ltrs" data-color="#0EA5E9">
+        <p id="ltr-note" class="snote"></p>
+      </div>
+
+      <p class="preset-ttl" style="margin-top:4px">Quick set</p>
+      <div id="sky-presets"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── 5-YEAR CHART ────────────────────────────────────────── -->
+<div class="chart-card">
+  <p class="chart-ttl">10-year monthly revenue projection</p>
+  <p class="chart-sub">Both tiers: 2 claims in Year 1, 1/yr after, 10% churn. Large (Provider 1): sliding-scale fee + 8% IEG, your 10%. Small (Provider 2): 15% fee + 8% IEG, your 20%.</p>
+  <div class="legend">
+    <span class="leg-item"><span class="leg-dot" style="background:#3B8BEB"></span>SR&amp;ED</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#8B5CF6"></span>Carbon credits</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#F59E0B"></span>Abandonment</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#0EA5E9"></span>Clear Sky</span>
+    <span class="leg-item">
+      <svg width="20" height="12" style="flex-shrink:0" aria-hidden="true"><line x1="0" y1="6" x2="20" y2="6" stroke="#22C55E" stroke-width="2" stroke-dasharray="4,3"/></svg>
+      $30K target
+    </span>
+  </div>
+  <div style="position:relative;width:100%;height:320px">
+    <canvas id="projChart" role="img" aria-label="Stacked bar chart showing 10-year monthly revenue projection across SR&ED, carbon credits, abandonment, and Clear Sky streams with a $30K target reference line">Monthly revenue projection for years 1 through 10.</canvas>
+  </div>
+</div>
+
+<!-- ── FOOTER ─────────────────────────────────────────────── -->
+<footer class="footer">
+  <p>Impact Hydrogen Solutions &nbsp;·&nbsp; SR&amp;ED · Abandonment Services · Carbon Credits · Clear Sky Fuel</p>
+  <p>SR&amp;ED: both tiers file 2 claims in Year 1 (18-month lookback), 1/yr after, 10% annual churn. Large clients (Provider 1): sliding-scale fee structure ($25K base + band rate on amount over $100K) plus 8% IEG at same rate, Chris earns 10% of total fee. Small clients (Provider 2): 15% fee on refund + 8% IEG, Chris earns 20% of fee (3.24% effective). IEG held at 8% — intentionally conservative.</p>
+  <p>Carbon credits: $0.455/tonne (up to 1M t/mo). &nbsp;Abandonment: $6,000 base + 2% of monthly sales (up to $2M/mo). &nbsp;Clear Sky: 7% of 3.5¢/L = $0.00245/L (up to 5M L/mo). &nbsp;10-year projection.</p>
+</footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const IEG_RATE = 0.08;  // Alberta IEG at 8% — conservative, intentionally underestimates
+
+// Provider 1 (large O&G, >$500K): Sliding-scale fee + IEG fee, Chris earns 10%
+// Band rate is applied to (refund − $100K) above a $25K base, and also to IEG amount
+function largePerClaim(r) {
+  const ieg = r * IEG_RATE;
+  let fee, rate;
+  if      (r < 40000)    { fee = 10000;                      rate = 0.25; }
+  else if (r <= 100000)  { rate = 0.25; fee = rate * r;                   }
+  else if (r <= 250000)  { rate = 0.22; fee = 25000 + rate * (r-100000); }
+  else if (r <= 500000)  { rate = 0.19; fee = 25000 + rate * (r-100000); }
+  else if (r <= 1000000) { rate = 0.16; fee = 25000 + rate * (r-100000); }
+  else                   { rate = 0.13; fee = 25000 + rate * (r-100000); }
+  return (fee + ieg * rate) * 0.10;  // Chris: 10% of (refund fee + IEG fee)
+}
+
+// Provider 2 (small, <$500K): 15% fee on (refund + 8% IEG), Chris earns 20% = 3.24% effective
+function smallPerClaim(r) {
+  return r * 0.15 * (1 + IEG_RATE) * 0.20;
+}
+const CARBON_RT   = 0.455;
+const BASE_ABN    = 6000;
+const COMM_ABN    = 0.02;
+const CLEAR_SKY_RT = 0.035 * 0.07;  // 3.5¢/L × 7% = $0.00245/L
+const TARGET      = 30000;
+
+let selYear = 1;
+let chart;
+
+function el(id){ return document.getElementById(id); }
+
+function fmtFull(n){
+  return '$' + Math.round(n).toLocaleString('en-CA');
+}
+function fmtShort(n){
+  const v = Math.round(n);
+  if(v >= 1000000) return '$' + (v/1000000).toFixed(2) + 'M';
+  if(v >= 1000)    return '$' + Math.round(v/1000) + 'K';
+  return '$' + v;
+}
+function fmtT(n){
+  if(n >= 1000000) return (n/1000000).toFixed(2).replace(/\.?0+$/,'') + 'M t';
+  return n >= 1000 ? (n/1000).toFixed(0) + 'K t' : n + ' t';
+}
+function fmtL(n){
+  if(n >= 1000000) return (n/1000000).toFixed(1).replace(/\.0$/,'') + 'M L';
+  return n >= 1000 ? (n/1000).toFixed(0) + 'K L' : n + ' L';
+}
+
+function fillSlider(s){
+  const color = s.dataset.color || '#fff';
+  const pct = ((parseFloat(s.value) - parseFloat(s.min)) / (parseFloat(s.max) - parseFloat(s.min))) * 100;
+  s.style.background = `linear-gradient(to right,${color} ${pct}%,rgba(255,255,255,.12) ${pct}%)`;
+}
+
+// SR&ED — both tiers: 2 claims in Year 1, 1/yr after, 10% annual churn.
+// Large O&G: Provider 1 sliding-scale fee + 8% IEG, Chris 10% of fee.
+// Small:     Provider 2 — 15% fee + 8% IEG, Chris 20% of fee = 3.24% effective.
+// churnSum = Σ(k=1..yr-1) 0.9^k = 9 × (1 − 0.9^(yr−1))
+function calcSRED(nl, ns, al, as_, yr){
+  const churnSum = 9 * (1 - Math.pow(0.9, yr - 1));
+  const large    = nl * largePerClaim(al) * (2 + churnSum);
+  const small    = ns * smallPerClaim(as_) * (2 + churnSum);
+  return (large + small) / 12;
+}
+
+function update(){
+  const nl  = +el('nlarge').value;
+  const ns  = +el('nsmall').value;
+  const al  = +el('avgl').value;
+  const as_ = +el('avgs').value;
+  const tn  = +el('tons').value;
+  const sl  = +el('sales').value;
+  const lt  = +el('ltrs').value;
+
+  ['nlarge','nsmall','avgl','avgs','tons','sales','ltrs'].forEach(id => fillSlider(el(id)));
+
+  const sred   = calcSRED(nl, ns, al, as_, selYear);
+  const carbon = tn * CARBON_RT;
+  const abn    = BASE_ABN + sl * COMM_ABN;
+  const sky    = lt * CLEAR_SKY_RT;
+  const total  = sred + carbon + abn + sky;
+
+  el('nlarge-v').textContent = nl + ' clients';
+  el('nsmall-v').textContent = ns + ' clients';
+  el('avgl-v').textContent   = fmtShort(al);
+  el('avgs-v').textContent   = fmtShort(as_);
+  el('avgl-note').textContent = 'Per claim at ' + fmtShort(al) + ': ' + fmtFull(largePerClaim(al)) + ' (sliding scale + 8% IEG, your 10%)';
+  el('avgs-note').textContent = 'Per claim: ' + fmtFull(smallPerClaim(as_)) + '  ·  Year 1 (×2): ' + fmtFull(smallPerClaim(as_) * 2) + '  (15% fee + 8% IEG, your 20% = 3.24% eff.)';
+  el('ton-v').textContent    = fmtT(tn) + '/mo';
+  el('sale-v').textContent   = sl === 0 ? 'None' : fmtShort(sl) + '/mo';
+  el('sale-note').textContent = 'Commission: ' + fmtFull(sl * COMM_ABN) + '/mo   ·   Total: ' + fmtFull(abn) + '/mo';
+  el('ltr-v').textContent    = fmtL(lt) + '/mo';
+  el('ltr-note').textContent = '$0.00245 per litre   ·   Monthly revenue: ' + fmtFull(sky);
+
+  el('sred-t').textContent   = fmtFull(sred);
+  el('sred-m').textContent   = fmtFull(sred);
+  el('carbon-t').textContent = fmtFull(carbon);
+  el('carbon-m').textContent = fmtFull(carbon);
+  el('abn-t').textContent    = fmtFull(abn);
+  el('abn-m').textContent    = fmtFull(abn);
+  el('sky-t').textContent    = fmtFull(sky);
+  el('sky-m').textContent    = fmtFull(sky);
+  el('ann-d').textContent    = fmtFull(total * 12);
+  el('total-d').textContent  = fmtFull(total);
+
+  const col = total >= TARGET ? '#22C55E' : total >= TARGET * 0.7 ? '#F59E0B' : '#EF4444';
+  el('total-d').style.color = col;
+
+  const pct = Math.min(Math.round((total / TARGET) * 100), 200);
+  el('pct-d').textContent  = pct + '%';
+  el('pbar').style.width   = Math.min(pct, 100) + '%';
+  el('pbar').style.background = total >= TARGET ? '#22C55E' : total >= TARGET * 0.5 ? '#F59E0B' : '#EF4444';
+
+  let msg, mc;
+  if(total >= 50000){
+    msg = 'The $50K+ identity has arrived. This is your new baseline.'; mc = '#22C55E';
+  } else if(total >= TARGET){
+    msg = 'Target met — operating from the $30K identity.'; mc = '#22C55E';
+  } else if(total > 0){
+    msg = fmtFull(TARGET - total) + ' away from the $30K target.'; mc = 'rgba(240,244,248,.55)';
+  } else {
+    msg = 'Adjust the sliders to model your income.'; mc = 'rgba(240,244,248,.4)';
+  }
+  el('status-msg').textContent = msg;
+  el('status-msg').style.color = mc;
+
+  updateChart(nl, ns, al, as_, tn, sl, lt);
+}
+
+function updateChart(nl, ns, al, as_, tn, sl, lt){
+  const carbonMo = Math.round(tn * CARBON_RT);
+  const abnMo    = Math.round(BASE_ABN + sl * COMM_ABN);
+  const skyMo    = Math.round(lt * CLEAR_SKY_RT);
+  chart.data.datasets[0].data = [1,2,3,4,5,6,7,8,9,10].map(y => Math.round(calcSRED(nl, ns, al, as_, y)));
+  chart.data.datasets[1].data = [1,2,3,4,5,6,7,8,9,10].map(() => carbonMo);
+  chart.data.datasets[2].data = [1,2,3,4,5,6,7,8,9,10].map(() => abnMo);
+  chart.data.datasets[3].data = [1,2,3,4,5,6,7,8,9,10].map(() => skyMo);
+  chart.update('none');
+}
+
+/* ── Year pills ── */
+const ypEl = el('ypills');
+for(let y = 1; y <= 10; y++){
+  const b = document.createElement('button');
+  b.textContent = 'Year ' + y;
+  b.className = 'ypill' + (y === 1 ? ' on' : '');
+  b.onclick = () => {
+    selYear = y;
+    document.querySelectorAll('.ypill').forEach((btn, i) => {
+      btn.className = 'ypill' + (i + 1 === y ? ' on' : '');
+    });
+    update();
+  };
+  ypEl.appendChild(b);
+}
+
+/* ── Carbon presets ── */
+[
+  {t:10000,  l:'Small projects'},
+  {t:50000,  l:'Medium scale'},
+  {t:100000, l:'Large portfolio'},
+  {t:250000, l:'Major program'},
+  {t:500000, l:'Full scale'},
+  {t:1000000,l:'Maximum — 1M t'}
+].forEach(({t, l}) => {
+  const d = document.createElement('div');
+  d.className = 'preset-row';
+  d.innerHTML = `<span class="preset-lbl">${l} (${fmtT(t)})</span><span class="preset-val" style="color:var(--purple)">${fmtFull(t * CARBON_RT)}/mo</span>`;
+  d.onclick = () => { el('tons').value = t; update(); };
+  el('ton-presets').appendChild(d);
+});
+
+/* ── Sales presets ── */
+[
+  {s:0,       l:'Base only'},
+  {s:250000,  l:'Light activity'},
+  {s:500000,  l:'Active pipeline'},
+  {s:1000000, l:'Strong quarter'},
+  {s:1500000, l:'High capacity'},
+  {s:2000000, l:'Full capacity'}
+].forEach(({s, l}) => {
+  const d = document.createElement('div');
+  d.className = 'preset-row';
+  d.innerHTML = `<span class="preset-lbl">${l}</span><span class="preset-val" style="color:var(--amber)">${fmtFull(BASE_ABN + s * COMM_ABN)}/mo</span>`;
+  d.onclick = () => { el('sales').value = s; update(); };
+  el('sale-presets').appendChild(d);
+});
+
+/* ── Clear Sky presets ── */
+[
+  {l:250000,  lab:'Entry level'},
+  {l:500000,  lab:'Growing accounts'},
+  {l:1000000, lab:'Active territory'},
+  {l:2000000, lab:'Strong volume'},
+  {l:3500000, lab:'High capacity'},
+  {l:5000000, lab:'Full capacity — 5M L'}
+].forEach(({l, lab}) => {
+  const d = document.createElement('div');
+  d.className = 'preset-row';
+  d.innerHTML = `<span class="preset-lbl">${lab} (${fmtL(l)})</span><span class="preset-val" style="color:var(--sky)">${fmtFull(l * CLEAR_SKY_RT)}/mo</span>`;
+  d.onclick = () => { el('ltrs').value = l; update(); };
+  el('sky-presets').appendChild(d);
+});
+
+/* ── Bind sliders ── */
+['nlarge','nsmall','avgl','avgs','tons','sales','ltrs'].forEach(id => {
+  el(id).addEventListener('input', update);
+});
+
+/* ── Chart ── */
+const ctx = el('projChart').getContext('2d');
+chart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Yr 1','Yr 2','Yr 3','Yr 4','Yr 5','Yr 6','Yr 7','Yr 8','Yr 9','Yr 10'],
+    datasets: [
+      { label:'SR&ED',          data:[0,0,0,0,0,0,0,0,0,0], backgroundColor:'#3B8BEB', stack:'s' },
+      { label:'Carbon credits', data:[0,0,0,0,0,0,0,0,0,0], backgroundColor:'#8B5CF6', stack:'s' },
+      { label:'Abandonment',    data:[0,0,0,0,0,0,0,0,0,0], backgroundColor:'#F59E0B', stack:'s' },
+      { label:'Clear Sky',      data:[0,0,0,0,0,0,0,0,0,0], backgroundColor:'#0EA5E9', stack:'s' },
+      { type:'line', label:'$30K target',
+        data:[TARGET,TARGET,TARGET,TARGET,TARGET,TARGET,TARGET,TARGET,TARGET,TARGET],
+        borderColor:'#22C55E', borderDash:[5,4], borderWidth:2,
+        pointRadius:0, fill:false, order:0 }
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins: {
+      legend:{ display:false },
+      tooltip:{
+        backgroundColor:'rgba(8,15,28,.96)',
+        titleColor:'#F0F4F8',
+        bodyColor:'rgba(240,244,248,.7)',
+        footerColor:'rgba(240,244,248,.9)',
+        borderColor:'#1A3252',
+        borderWidth:1,
+        padding:12,
+        callbacks:{
+          label: c => '  ' + c.dataset.label + ':  ' + fmtFull(c.raw),
+          footer: items => {
+            const t = items.filter(i => i.datasetIndex < 4).reduce((a,i) => a + i.raw, 0);
+            return 'Total: ' + fmtFull(t) + ' / month';
+          }
+        }
+      }
+    },
+    scales:{
+      x:{
+        grid:{ display:false },
+        ticks:{ color:'rgba(240,244,248,.45)', font:{ size:12 } },
+        border:{ color:'rgba(255,255,255,.08)' }
+      },
+      y:{
+        grid:{ color:'rgba(255,255,255,.05)' },
+        ticks:{ color:'rgba(240,244,248,.45)', font:{ size:11 }, callback: v => '$' + Math.round(v/1000) + 'K' },
+        border:{ display:false },
+        beginAtZero:true
+      }
+    }
+  }
+});
+
+update();
+</script>
+</body>
+</html>
