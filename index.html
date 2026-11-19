@@ -22,9 +22,6 @@
   --amber:    #F59E0B;
   --amb-dk:   #B45309;
   --amb-dim:  rgba(245,158,11,.1);
-  --sky:      #0EA5E9;
-  --sky-dk:   #0369A1;
-  --sky-dim:  rgba(14,165,233,.1);
   --green:    #22C55E;
   --gold:     #C9A84C;
   --danger:   #EF4444;
@@ -62,9 +59,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .stream-mini-val{font-size:15px;font-weight:700}
 
 /* ── cards grid ── */
-.cards-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:18px}
-@media(max-width:600px){.cards-grid{grid-template-columns:1fr}}
-@media(min-width:1000px){.cards-grid{grid-template-columns:repeat(4,1fr)}}
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
+@media(max-width:860px){.cards-grid{grid-template-columns:1fr}}
+@media(min-width:560px) and (max-width:860px){.cards-grid{grid-template-columns:repeat(2,1fr)}}
 
 .stream-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
 .card-bar{height:3px}
@@ -132,7 +129,6 @@ input[type=range]::-moz-range-track{height:4px;border-radius:2px}
       <span class="badge"><span class="badge-dot" style="background:#3B8BEB"></span>SR&amp;ED</span>
       <span class="badge"><span class="badge-dot" style="background:#8B5CF6"></span>Carbon Credits</span>
       <span class="badge"><span class="badge-dot" style="background:#F59E0B"></span>Abandonment Services</span>
-      <span class="badge"><span class="badge-dot" style="background:#0EA5E9"></span>Clear Sky Fuel</span>
     </div>
   </div>
   <div class="hdr-annual">
@@ -151,7 +147,7 @@ input[type=range]::-moz-range-track{height:4px;border-radius:2px}
   <div class="prog-wrap">
     <div class="prog-row"><span>Toward $30,000 / month</span><span id="pct-d">—</span></div>
     <div class="prog-track"><div id="pbar" class="prog-fill" style="width:0%;background:var(--blue)"></div></div>
-    <div class="stream-row" style="grid-template-columns:repeat(4,1fr)">
+    <div class="stream-row">
       <div>
         <p class="stream-mini-lbl">SR&amp;ED</p>
         <p id="sred-m" class="stream-mini-val" style="color:var(--blue)">—</p>
@@ -163,10 +159,6 @@ input[type=range]::-moz-range-track{height:4px;border-radius:2px}
       <div>
         <p class="stream-mini-lbl">Abandonment</p>
         <p id="abn-m" class="stream-mini-val" style="color:var(--amber)">—</p>
-      </div>
-      <div>
-        <p class="stream-mini-lbl">Clear Sky</p>
-        <p id="sky-m" class="stream-mini-val" style="color:var(--sky)">—</p>
       </div>
     </div>
   </div>
@@ -186,16 +178,16 @@ input[type=range]::-moz-range-track{height:4px;border-radius:2px}
 
       <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:7px">Portfolio year</p>
       <div class="year-pills" id="ypills"></div>
-      <p style="font-size:11px;color:var(--t3);line-height:1.5;margin:5px 0 18px"><strong style="color:rgba(240,244,248,.5)">Large O&amp;G (Provider 1):</strong> Sliding-scale fee + 8% IEG, your 10% — rate varies by claim size (~1.5–2.2%). 2 claims in Year 1, 1/yr after, 10% churn.<br><strong style="color:rgba(240,244,248,.5)">Small clients (Provider 2):</strong> 15% fee + 8% IEG, your 20% = 3.24% effective. 2 claims in Year 1, 1/yr after, 10% churn.</p>
+      <p style="font-size:11px;color:var(--t3);line-height:1.5;margin:5px 0 18px">First-time clients file 2 claims in Year 1 via the 18-month lookback; 1 annually after. 10% annual churn applied (client closures / bankruptcy).</p>
 
       <div class="srow">
         <div class="slbl"><span class="slbl-txt">New large O&amp;G clients / year</span><span id="nlarge-v" class="slbl-val" style="color:var(--blue)">4</span></div>
-        <input type="range" min="0" max="36" step="1" value="4" id="nlarge" data-color="#3B8BEB">
+        <input type="range" min="0" max="20" step="1" value="4" id="nlarge" data-color="#3B8BEB">
       </div>
 
       <div class="srow">
         <div class="slbl"><span class="slbl-txt">New small clients / year</span><span id="nsmall-v" class="slbl-val" style="color:var(--blue)">6</span></div>
-        <input type="range" min="0" max="48" step="1" value="6" id="nsmall" data-color="#3B8BEB">
+        <input type="range" min="0" max="30" step="1" value="6" id="nsmall" data-color="#3B8BEB">
       </div>
 
       <div class="srow">
@@ -211,8 +203,17 @@ input[type=range]::-moz-range-track{height:4px;border-radius:2px}
       </div>
 
       <div class="ibox" style="background:var(--blue-dim);border-color:rgba(59,139,235,.35)">
-        Large (Provider 1): <strong style="color:var(--blue)">Sliding-scale fee + 8% IEG · your 10% (~1.5–2.2% eff.)</strong><br>
-        Small (Provider 2): <strong style="color:var(--blue)">15% fee + 8% IEG · your 20% = 3.24% effective</strong>
+        <span style="color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-size:10px;font-weight:700">Large O&amp;G clients</span><br>
+        15% of 5% of claim = <strong style="color:var(--blue)">0.75%</strong><br>
+        + 10% of sliding-scale fee:<br>
+        <span style="color:var(--t3)">&lt;$40K: $10K flat · $40–100K: 25%<br>
+        $100K+: 25% of first $100K, plus<br>
+        22% ($100–250K) · 19% ($250–500K)<br>
+        16% ($500K–1M) · 13% (&gt;$1M) of remainder</span>
+        <div style="height:8px"></div>
+        <span style="color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-size:10px;font-weight:700">Small clients</span><br>
+        20% of 15% = <strong style="color:var(--blue)">3.0% of straight SR&amp;ED claim</strong><br>
+        <span style="color:var(--t3)">No IEG adjustment — calculated on the full claim amount.</span>
       </div>
     </div>
   </div>
@@ -227,7 +228,7 @@ input[type=range]::-moz-range-track{height:4px;border-radius:2px}
       </div>
 
       <div class="ibox" style="background:var(--pur-dim);border-color:rgba(139,92,246,.35);margin-bottom:20px">
-        Rate: <strong style="color:var(--purple)">$0.455 per tonne</strong><br>
+        Rate: <strong style="color:var(--purple)">$0.492 per tonne</strong><br>
         Credits from qualifying carbon reduction projects — often the same projects as abandonment work, creating a natural dual-stream synergy
       </div>
 
@@ -272,88 +273,62 @@ input[type=range]::-moz-range-track{height:4px;border-radius:2px}
     </div>
   </div>
 
-  <!-- Clear Sky Fuel -->
-  <div class="stream-card">
-    <div class="card-bar" style="background:var(--sky)"></div>
-    <div class="card-body">
-      <div class="card-hdr">
-        <span class="card-name" style="color:var(--sky)">Clear Sky Fuel</span>
-        <span id="sky-t" class="card-tot" style="color:var(--sky)">—</span>
-      </div>
-
-      <div class="ibox" style="background:var(--sky-dim);border-color:rgba(14,165,233,.35);margin-bottom:20px">
-        Rate: <strong style="color:var(--sky)">3.5¢ per litre</strong>&nbsp;·&nbsp;Your commission: <strong style="color:var(--sky)">7% = $0.00245 / L</strong><br>
-        Fuel savings program — up to 5,000,000 L / month
-      </div>
-
-      <div class="srow">
-        <div class="slbl"><span class="slbl-txt">Monthly volume</span><span id="ltr-v" class="slbl-val" style="color:var(--sky)">250K L</span></div>
-        <input type="range" min="0" max="5000000" step="50000" value="250000" id="ltrs" data-color="#0EA5E9">
-        <p id="ltr-note" class="snote"></p>
-      </div>
-
-      <p class="preset-ttl" style="margin-top:4px">Quick set</p>
-      <div id="sky-presets"></div>
-    </div>
-  </div>
-
 </div>
 
 <!-- ── 5-YEAR CHART ────────────────────────────────────────── -->
 <div class="chart-card">
   <p class="chart-ttl">10-year monthly revenue projection</p>
-  <p class="chart-sub">Both tiers: 2 claims in Year 1, 1/yr after, 10% churn. Large (Provider 1): sliding-scale fee + 8% IEG, your 10%. Small (Provider 2): 15% fee + 8% IEG, your 20%.</p>
+  <p class="chart-sub">SR&amp;ED compounds as your client portfolio grows — 10% annual churn applied. Carbon and abandonment reflect current slider values.</p>
   <div class="legend">
     <span class="leg-item"><span class="leg-dot" style="background:#3B8BEB"></span>SR&amp;ED</span>
     <span class="leg-item"><span class="leg-dot" style="background:#8B5CF6"></span>Carbon credits</span>
     <span class="leg-item"><span class="leg-dot" style="background:#F59E0B"></span>Abandonment</span>
-    <span class="leg-item"><span class="leg-dot" style="background:#0EA5E9"></span>Clear Sky</span>
     <span class="leg-item">
       <svg width="20" height="12" style="flex-shrink:0" aria-hidden="true"><line x1="0" y1="6" x2="20" y2="6" stroke="#22C55E" stroke-width="2" stroke-dasharray="4,3"/></svg>
       $30K target
     </span>
   </div>
   <div style="position:relative;width:100%;height:320px">
-    <canvas id="projChart" role="img" aria-label="Stacked bar chart showing 10-year monthly revenue projection across SR&ED, carbon credits, abandonment, and Clear Sky streams with a $30K target reference line">Monthly revenue projection for years 1 through 10.</canvas>
+    <canvas id="projChart" role="img" aria-label="Stacked bar chart showing 5-year monthly revenue projection across SR&ED, carbon credits, and abandonment streams with a $30K target reference line">Monthly revenue projection for years 1 through 5.</canvas>
   </div>
 </div>
 
 <!-- ── FOOTER ─────────────────────────────────────────────── -->
 <footer class="footer">
-  <p>Impact Hydrogen Solutions &nbsp;·&nbsp; SR&amp;ED · Abandonment Services · Carbon Credits · Clear Sky Fuel</p>
-  <p>SR&amp;ED: both tiers file 2 claims in Year 1 (18-month lookback), 1/yr after, 10% annual churn. Large clients (Provider 1): sliding-scale fee structure ($25K base + band rate on amount over $100K) plus 8% IEG at same rate, Chris earns 10% of total fee. Small clients (Provider 2): 15% fee on refund + 8% IEG, Chris earns 20% of fee (3.24% effective). IEG held at 8% — intentionally conservative.</p>
-  <p>Carbon credits: $0.455/tonne (up to 1M t/mo). &nbsp;Abandonment: $6,000 base + 2% of monthly sales (up to $2M/mo). &nbsp;Clear Sky: 7% of 3.5¢/L = $0.00245/L (up to 5M L/mo). &nbsp;10-year projection.</p>
+  <p>Impact Hydrogen Solutions &nbsp;·&nbsp; SR&amp;ED · Abandonment Services · Carbon Credits</p>
+  <p>SR&amp;ED (calculated on the straight claim amount, no IEG): large clients earn 15% of 5% of the claim (0.75%) plus 10% of the sliding-scale fee (25% of the first $100K of the refund, plus 22% / 19% / 16% / 13% of the remainder by tier; $10,000 flat under $40K); small clients earn 20% of 15% (3.0% effective rate). First-time filers submit two years of claims in Year 1 via the 18-month lookback. 10% annual client churn applied from Year 2 onward.</p>
+  <p>Carbon credits: $0.492 per tonne (up to 1,000,000 t/mo). &nbsp;Abandonment: $6,000 base retainer + 2% of monthly sales (up to $2,000,000/mo). &nbsp;10-year projection.</p>
 </footer>
 
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const IEG_RATE = 0.08;  // Alberta IEG at 8% — conservative, intentionally underestimates
-
-// Provider 1 (large O&G, >$500K): Sliding-scale fee + IEG fee, Chris earns 10%
-// Band rate is applied to (refund − $100K) above a $25K base, and also to IEG amount
-function largePerClaim(r) {
-  const ieg = r * IEG_RATE;
-  let fee, rate;
-  if      (r < 40000)    { fee = 10000;                      rate = 0.25; }
-  else if (r <= 100000)  { rate = 0.25; fee = rate * r;                   }
-  else if (r <= 250000)  { rate = 0.22; fee = 25000 + rate * (r-100000); }
-  else if (r <= 500000)  { rate = 0.19; fee = 25000 + rate * (r-100000); }
-  else if (r <= 1000000) { rate = 0.16; fee = 25000 + rate * (r-100000); }
-  else                   { rate = 0.13; fee = 25000 + rate * (r-100000); }
-  return (fee + ieg * rate) * 0.10;  // Chris: 10% of (refund fee + IEG fee)
+// Large O&G: my take = 15% of 5% of the claim (0.75%) + 10% of the client sliding-scale fee.
+// Sliding scale (applied to the refund amount / claim value):
+//   < $40K          -> flat $10,000
+//   $40K - $100K    -> 25% of refund
+//   $100K - $250K   -> 25% of first $100K + 22% of remainder
+//   $250K - $500K   -> 25% of first $100K + 19% of remainder
+//   $500K - $1M     -> 25% of first $100K + 16% of remainder
+//   > $1M           -> 25% of first $100K + 13% of remainder
+const LARGE_BASE_RATE = 0.15 * 0.05;
+const LARGE_SLIDE_SHARE = 0.10;
+function slidingFee(r){
+  if(r < 40000)    return 10000;
+  if(r <= 100000)  return r * 0.25;
+  const rest = r - 100000;
+  const rate = r < 250000 ? 0.22 : r < 500000 ? 0.19 : r <= 1000000 ? 0.16 : 0.13;
+  return 25000 + rest * rate;
 }
-
-// Provider 2 (small, <$500K): 15% fee on (refund + 8% IEG), Chris earns 20% = 3.24% effective
-function smallPerClaim(r) {
-  return r * 0.15 * (1 + IEG_RATE) * 0.20;
+function largeCommission(claim){
+  return claim * LARGE_BASE_RATE + slidingFee(claim) * LARGE_SLIDE_SHARE;
 }
-const CARBON_RT   = 0.455;
-const BASE_ABN    = 6000;
-const COMM_ABN    = 0.02;
-const CLEAR_SKY_RT = 0.035 * 0.07;  // 3.5¢/L × 7% = $0.00245/L
-const TARGET      = 30000;
+const SMALL_RATE = 0.15  * 0.20;
+const CARBON_RT  = 0.492;
+const BASE_ABN   = 6000;
+const COMM_ABN   = 0.02;
+const TARGET     = 30000;
 
 let selYear = 1;
 let chart;
@@ -373,10 +348,6 @@ function fmtT(n){
   if(n >= 1000000) return (n/1000000).toFixed(2).replace(/\.?0+$/,'') + 'M t';
   return n >= 1000 ? (n/1000).toFixed(0) + 'K t' : n + ' t';
 }
-function fmtL(n){
-  if(n >= 1000000) return (n/1000000).toFixed(1).replace(/\.0$/,'') + 'M L';
-  return n >= 1000 ? (n/1000).toFixed(0) + 'K L' : n + ' L';
-}
 
 function fillSlider(s){
   const color = s.dataset.color || '#fff';
@@ -384,15 +355,13 @@ function fillSlider(s){
   s.style.background = `linear-gradient(to right,${color} ${pct}%,rgba(255,255,255,.12) ${pct}%)`;
 }
 
-// SR&ED — both tiers: 2 claims in Year 1, 1/yr after, 10% annual churn.
-// Large O&G: Provider 1 sliding-scale fee + 8% IEG, Chris 10% of fee.
-// Small:     Provider 2 — 15% fee + 8% IEG, Chris 20% of fee = 3.24% effective.
-// churnSum = Σ(k=1..yr-1) 0.9^k = 9 × (1 − 0.9^(yr−1))
+// SR&ED with 10% annual churn.
+// New cohort files 2 claims in Year 1, then 1/yr on survivors.
+// Cohort added in Yr k contributes 0.9^(y-k) × 1 claim in year y (for y>k) and 2 claims when y=k.
+// Annual multiplier = 2 + Σ(k=1..y-1) 0.9^k = 2 + 9×(1 - 0.9^(y-1))
 function calcSRED(nl, ns, al, as_, yr){
-  const churnSum = 9 * (1 - Math.pow(0.9, yr - 1));
-  const large    = nl * largePerClaim(al) * (2 + churnSum);
-  const small    = ns * smallPerClaim(as_) * (2 + churnSum);
-  return (large + small) / 12;
+  const multiplier = 2 + 9 * (1 - Math.pow(0.9, yr - 1));
+  return ((nl * multiplier * largeCommission(al)) + (ns * multiplier * as_ * SMALL_RATE)) / 12;
 }
 
 function update(){
@@ -402,27 +371,23 @@ function update(){
   const as_ = +el('avgs').value;
   const tn  = +el('tons').value;
   const sl  = +el('sales').value;
-  const lt  = +el('ltrs').value;
 
-  ['nlarge','nsmall','avgl','avgs','tons','sales','ltrs'].forEach(id => fillSlider(el(id)));
+  ['nlarge','nsmall','avgl','avgs','tons','sales'].forEach(id => fillSlider(el(id)));
 
   const sred   = calcSRED(nl, ns, al, as_, selYear);
   const carbon = tn * CARBON_RT;
   const abn    = BASE_ABN + sl * COMM_ABN;
-  const sky    = lt * CLEAR_SKY_RT;
-  const total  = sred + carbon + abn + sky;
+  const total  = sred + carbon + abn;
 
   el('nlarge-v').textContent = nl + ' clients';
   el('nsmall-v').textContent = ns + ' clients';
   el('avgl-v').textContent   = fmtShort(al);
   el('avgs-v').textContent   = fmtShort(as_);
-  el('avgl-note').textContent = 'Per claim at ' + fmtShort(al) + ': ' + fmtFull(largePerClaim(al)) + ' (sliding scale + 8% IEG, your 10%)';
-  el('avgs-note').textContent = 'Per claim: ' + fmtFull(smallPerClaim(as_)) + '  ·  Year 1 (×2): ' + fmtFull(smallPerClaim(as_) * 2) + '  (15% fee + 8% IEG, your 20% = 3.24% eff.)';
+  el('avgl-note').innerHTML = 'Client fee ' + fmtFull(slidingFee(al)) + ' (' + (slidingFee(al)/al*100).toFixed(1) + '%)  ·  Your 10% = ' + fmtFull(slidingFee(al)*LARGE_SLIDE_SHARE) + ' + 0.75% = ' + fmtFull(al*LARGE_BASE_RATE) + '<br>Per claim → <strong style="color:var(--blue)">' + fmtFull(largeCommission(al)) + '</strong> (' + (largeCommission(al)/al*100).toFixed(2) + '%)  ·  Year 1 double → ' + fmtFull(largeCommission(al)*2);
+  el('avgs-note').textContent = 'Per claim → ' + fmtFull(as_ * SMALL_RATE) + '   ·   Year 1 double → ' + fmtFull(as_ * SMALL_RATE * 2);
   el('ton-v').textContent    = fmtT(tn) + '/mo';
   el('sale-v').textContent   = sl === 0 ? 'None' : fmtShort(sl) + '/mo';
   el('sale-note').textContent = 'Commission: ' + fmtFull(sl * COMM_ABN) + '/mo   ·   Total: ' + fmtFull(abn) + '/mo';
-  el('ltr-v').textContent    = fmtL(lt) + '/mo';
-  el('ltr-note').textContent = '$0.00245 per litre   ·   Monthly revenue: ' + fmtFull(sky);
 
   el('sred-t').textContent   = fmtFull(sred);
   el('sred-m').textContent   = fmtFull(sred);
@@ -430,8 +395,6 @@ function update(){
   el('carbon-m').textContent = fmtFull(carbon);
   el('abn-t').textContent    = fmtFull(abn);
   el('abn-m').textContent    = fmtFull(abn);
-  el('sky-t').textContent    = fmtFull(sky);
-  el('sky-m').textContent    = fmtFull(sky);
   el('ann-d').textContent    = fmtFull(total * 12);
   el('total-d').textContent  = fmtFull(total);
 
@@ -456,17 +419,15 @@ function update(){
   el('status-msg').textContent = msg;
   el('status-msg').style.color = mc;
 
-  updateChart(nl, ns, al, as_, tn, sl, lt);
+  updateChart(nl, ns, al, as_, tn, sl);
 }
 
-function updateChart(nl, ns, al, as_, tn, sl, lt){
+function updateChart(nl, ns, al, as_, tn, sl){
   const carbonMo = Math.round(tn * CARBON_RT);
   const abnMo    = Math.round(BASE_ABN + sl * COMM_ABN);
-  const skyMo    = Math.round(lt * CLEAR_SKY_RT);
   chart.data.datasets[0].data = [1,2,3,4,5,6,7,8,9,10].map(y => Math.round(calcSRED(nl, ns, al, as_, y)));
   chart.data.datasets[1].data = [1,2,3,4,5,6,7,8,9,10].map(() => carbonMo);
   chart.data.datasets[2].data = [1,2,3,4,5,6,7,8,9,10].map(() => abnMo);
-  chart.data.datasets[3].data = [1,2,3,4,5,6,7,8,9,10].map(() => skyMo);
   chart.update('none');
 }
 
@@ -518,24 +479,8 @@ for(let y = 1; y <= 10; y++){
   el('sale-presets').appendChild(d);
 });
 
-/* ── Clear Sky presets ── */
-[
-  {l:250000,  lab:'Entry level'},
-  {l:500000,  lab:'Growing accounts'},
-  {l:1000000, lab:'Active territory'},
-  {l:2000000, lab:'Strong volume'},
-  {l:3500000, lab:'High capacity'},
-  {l:5000000, lab:'Full capacity — 5M L'}
-].forEach(({l, lab}) => {
-  const d = document.createElement('div');
-  d.className = 'preset-row';
-  d.innerHTML = `<span class="preset-lbl">${lab} (${fmtL(l)})</span><span class="preset-val" style="color:var(--sky)">${fmtFull(l * CLEAR_SKY_RT)}/mo</span>`;
-  d.onclick = () => { el('ltrs').value = l; update(); };
-  el('sky-presets').appendChild(d);
-});
-
 /* ── Bind sliders ── */
-['nlarge','nsmall','avgl','avgs','tons','sales','ltrs'].forEach(id => {
+['nlarge','nsmall','avgl','avgs','tons','sales'].forEach(id => {
   el(id).addEventListener('input', update);
 });
 
@@ -549,7 +494,6 @@ chart = new Chart(ctx, {
       { label:'SR&ED',          data:[0,0,0,0,0,0,0,0,0,0], backgroundColor:'#3B8BEB', stack:'s' },
       { label:'Carbon credits', data:[0,0,0,0,0,0,0,0,0,0], backgroundColor:'#8B5CF6', stack:'s' },
       { label:'Abandonment',    data:[0,0,0,0,0,0,0,0,0,0], backgroundColor:'#F59E0B', stack:'s' },
-      { label:'Clear Sky',      data:[0,0,0,0,0,0,0,0,0,0], backgroundColor:'#0EA5E9', stack:'s' },
       { type:'line', label:'$30K target',
         data:[TARGET,TARGET,TARGET,TARGET,TARGET,TARGET,TARGET,TARGET,TARGET,TARGET],
         borderColor:'#22C55E', borderDash:[5,4], borderWidth:2,
@@ -571,7 +515,7 @@ chart = new Chart(ctx, {
         callbacks:{
           label: c => '  ' + c.dataset.label + ':  ' + fmtFull(c.raw),
           footer: items => {
-            const t = items.filter(i => i.datasetIndex < 4).reduce((a,i) => a + i.raw, 0);
+            const t = items.filter(i => i.datasetIndex < 3).reduce((a,i) => a + i.raw, 0);
             return 'Total: ' + fmtFull(t) + ' / month';
           }
         }
